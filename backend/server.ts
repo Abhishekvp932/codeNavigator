@@ -6,6 +6,7 @@ dotenv.config();
 const app: Application = express();
 
 const PORT = process.env.PORT || 4000;
+
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
