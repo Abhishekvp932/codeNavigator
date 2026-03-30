@@ -6,6 +6,8 @@ export interface ExecutionState {
   isPaused: boolean;
   currentStepNodeId: string | null;
   variables: Record<string, any>;
+  callStack: { funcName: string; locals: Record<string, any> }[];
+  heap: Record<string, any>;
   consoleOutput: string[];
 }
 
@@ -28,6 +30,8 @@ const initialExecutionState: ExecutionState = {
   isPaused: false,
   currentStepNodeId: null,
   variables: {},
+  callStack: [],
+  heap: {},
   consoleOutput: [],
 };
 
@@ -35,7 +39,7 @@ const defaultCode = `// CodeNavigator MVP
 // Type or paste your JavaScript code here to see it visualized...
 let x = 10;
 let y = 20;
-let sum = x + y;
+let sum = x + y;  
 `;
 
 export const useCodeStore = create<CodeStore>((set) => ({

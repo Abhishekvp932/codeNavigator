@@ -31,7 +31,9 @@ export function ControlPanel() {
         case 'STEP':
           updateExecutionState({ 
             currentStepNodeId: event.nodeId, 
-            variables: event.variables 
+            variables: event.variables,
+            callStack: event.callStack || [],
+            heap: event.heap || {}
           });
           break;
         case 'CONSOLE':

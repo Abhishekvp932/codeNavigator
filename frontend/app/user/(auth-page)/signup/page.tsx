@@ -1,395 +1,298 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+// import { Checkbox } from '@/components/ui/checkbox'
+import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
+// import Logo from '../../../../public/cn-sm-logo.svg?react';
 export default function SignupPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
+  const [error, setError] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  // const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [passwordMatch, setPasswordMatch] = useState(true);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const validation = () => {
+    const newError = {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
 
+    let isValidate = true;
+
+    if (!formData.fullName) {
+      newError.fullName = "Name is Required";
+      isValidate = false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.email) {
+      newError.email = "Email is Required";
+      isValidate = false;
+    } else if (!emailRegex.test(formData.email)) {
+      newError.email = "Enter Valid Email id";
+      isValidate = false;
+    }
+
+    if (!formData.password) {
+      newError.password = "Password is Required";
+      isValidate = false;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      newError.confirmPassword = "Password Must Be Same";
+      isValidate = false;
+    }
+    setError(newError);
+    return isValidate;
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    if (name === 'confirmPassword' || name === 'password') {
-      setPasswordMatch(
-        name === 'confirmPassword' 
-          ? value === formData.password
-          : value === formData.confirmPassword
-      );
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!passwordMatch) {
-      console.log('Passwords do not match');
-      return;
-    }
-    
+    if (!validation()) return;
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log('Signup attempt:', formData);
-    }, 2000);
   };
 
-  if (!mounted) return null;
-
   return (
-    <div className="min-h-screen w-full bg-background relative overflow-hidden flex items-center justify-center">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-blue-950/20" />
+    <div className="min-h-screen relative overflow-hidden bg-background flex items-center justify-center px-4 py-8">
+      {/* Decorative Blobs */}
+      <div className="absolute top-1/4 -left-10 w-72 h-72 bg-primary/20 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob"></div>
+      <div className="absolute bottom-1/4 -right-10 w-72 h-72 bg-accent/20 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
-      {/* Floating code particles background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-accent/10 font-mono text-sm animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${i * 0.3}s`,
-              fontSize: `${10 + Math.random() * 12}px`,
-            }}
-          >
-            {['const', 'function', 'return', 'if', 'else', 'async', 'await'][
-              i % 7
-            ]}
-          </div>
-        ))}
-      </div>
-
-      {/* Animated grid background */}
-      <svg  
-        className="absolute inset-0 w-full h-full opacity-20"
-        preserveAspectRatio="none"
-        viewBox="0 0 1024 1024"
-      >
-        {/* Horizontal lines with glow */}
-        {[100, 250, 400, 550, 700, 850].map((y) => (
-          <line
-            key={`h-${y}`}
-            x1="0"
-            y1={y}
-            x2="1024"
-            y2={y}
-            stroke="url(#gridGradient)"
-            strokeWidth="1"
-            opacity="0.3"
-          />
-        ))}
-        {/* Vertical lines with glow */}
-        {[100, 250, 400, 550, 700, 850].map((x) => (
-          <line
-            key={`v-${x}`}
-            x1={x}
-            y1="0"
-            x2={x}
-            y2="1024"
-            stroke="url(#gridGradient)"
-            strokeWidth="1"
-            opacity="0.3"
-          />
-        ))}
-        {/* Glowing connection nodes */}
-        {[
-          { cx: 100, cy: 100 },
-          { cx: 250, cy: 250 },
-          { cx: 400, cy: 100 },
-          { cx: 700, cy: 550 },
-          { cx: 850, cy: 700 },
-          { cx: 100, cy: 700 },
-          { cx: 550, cy: 850 },
-          { cx: 900, cy: 900 },
-          { cx: 150, cy: 400 },
-        ].map((node, i) => (
-          <circle
-            key={`node-${i}`}
-            cx={node.cx}
-            cy={node.cy}
-            r="6"
-            fill="url(#nodeGradient)"
-            opacity="0.6"
-            className="animate-pulseGlow"
-            style={{ animationDelay: `${i * 0.15}s` }}
-          />
-        ))}
-        {/* Gradient definitions */}
-        <defs>
-          <linearGradient id="gridGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00d9ff" stopOpacity="0" />
-            <stop offset="50%" stopColor="#00d9ff" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#00d9ff" stopOpacity="0" />
-          </linearGradient>
-          <radialGradient id="nodeGradient">
-            <stop offset="0%" stopColor="#00d9ff" stopOpacity="1" />
-            <stop offset="100%" stopColor="#00d9ff" stopOpacity="0.3" />
-          </radialGradient>
-        </defs>
-      </svg>
-
-      {/* Main container */}
-      <div className="relative z-10 w-full max-w-md mx-auto px-6">
-        {/* Outer glow effect */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 blur-2xl" />
-
-        {/* Signup card */}
-        <div className="relative backdrop-blur-md border border-accent/30 rounded-2xl p-8 md:p-10 bg-card/40 animate-slideUp max-h-[90vh] overflow-y-auto">
-          {/* Top accent line */}
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-accent to-transparent rounded-full blur-md" />
-
-          {/* Animated logo */}
-          <div className="flex justify-center mb-6">
-            <div className="relative w-20 h-20 animate-float">
-              <svg
-                viewBox="0 0 100 100"
-                className="w-full h-full"
-                fill="none"
-                stroke="#00d9ff"
-                strokeWidth="2"
-              >
-                {/* Outer circle */}
-                <circle
-                  cx="50"
-                  cy="25"
-                  r="12"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0s' }}
-                />
-                <circle
-                  cx="35"
-                  cy="50"
-                  r="10"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.3s' }}
-                />
-                <circle
-                  cx="65"
-                  cy="50"
-                  r="10"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.6s' }}
-                />
-                <circle
-                  cx="50"
-                  cy="75"
-                  r="12"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.9s' }}
-                />
-
-                {/* Center element */}
-                <circle cx="50" cy="50" r="6" fill="#00d9ff" opacity="0.8" />
-
-                {/* Connecting lines with animation */}
-                <line
-                  x1="50"
-                  y1="37"
-                  x2="50"
-                  y2="44"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.1s' }}
-                />
-                <line
-                  x1="50"
-                  y1="56"
-                  x2="50"
-                  y2="63"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.2s' }}
-                />
-                <line
-                  x1="42"
-                  y1="50"
-                  x2="48"
-                  y2="50"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.3s' }}
-                />
-                <line
-                  x1="52"
-                  y1="50"
-                  x2="58"
-                  y2="50"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.4s' }}
-                />
-              </svg>
-
-              {/* Glow ring around logo */}
-              <div className="absolute inset-0 border-2 border-accent/30 rounded-full animate-pulse" />
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo and Branding */}
+        <div className="flex flex-col items-center mb-8">
+          <Link href="/" className="flex items-center gap-3 mb-6">
+            <div className="relative w-10 h-10">
+              <Image
+                src="/cn-sm-logo.svg"
+                alt="Code Navigator Logo"
+                fill
+                className="object-cover rounded-lg"
+              />
             </div>
-          </div>
+            <span className="text-xl font-bold text-foreground">
+              CodeNavigator
+            </span>
+          </Link>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Create Account
+          </h1>
+          <p className="text-muted-foreground text-center">
+            Join developers visualizing code smarter
+          </p>
+        </div>
 
-          {/* Title with gradient */}
-          <div className="text-center mb-6 animate-slideUp" style={{ animationDelay: '0.1s' }}>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">
-              <span className="text-foreground">Create</span>
-              <span className="bg-gradient-to-r from-accent to-blue-400 bg-clip-text text-transparent">
-                {' '}Account
-              </span>
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Join Code Navigator and start exploring
-            </p>
-          </div>
-
-          {/* Form */}
+        {/* Signup Card */}
+        <Card className="border border-border/50 backdrop-blur-md bg-card/80 p-8 shadow-2xl shadow-black/40">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Full Name Input */}
-            <div
-              className="space-y-2 animate-slideUp"
-              style={{ animationDelay: '0.2s' }}
-            >
-              <label htmlFor="fullName" className="block text-sm text-muted-foreground">
+            <div>
+              <label
+                htmlFor="fullName"
+                className="block text-sm font-medium text-foreground mb-2"
+              >
                 Full Name
               </label>
-              <input
+              <Input
                 id="fullName"
-                type="text"
                 name="fullName"
-                placeholder="John Developer"
+                type="text"
+                placeholder="John Doe"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-input/50 border border-accent/30 rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-accent/50"
+                className="bg-secondary/30 border-border/50 text-foreground placeholder:text-muted-foreground"
               />
+              {error && <p style={{ color: "red" }}>{error.fullName}</p>}
             </div>
 
             {/* Email Input */}
-            <div
-              className="space-y-2 animate-slideUp"
-              style={{ animationDelay: '0.25s' }}
-            >
-              <label htmlFor="email" className="block text-sm text-muted-foreground">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-foreground mb-2"
+              >
                 Email Address
               </label>
-              <input
+              <Input
                 id="email"
-                type="email"
                 name="email"
-                placeholder="dev@codenavigator.com"
+                type="email"
+                placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-input/50 border border-accent/30 rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-accent/50"
+                className="bg-secondary/30 border-border/50 text-foreground placeholder:text-muted-foreground"
               />
+              {error && <p style={{ color: "red" }}>{error.email}</p>}
             </div>
 
             {/* Password Input */}
-            <div
-              className="space-y-2 animate-slideUp"
-              style={{ animationDelay: '0.3s' }}
-            >
-              <label htmlFor="password" className="block text-sm text-muted-foreground">
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-foreground mb-2"
+              >
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                name="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-input/50 border border-accent/30 rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-accent/50"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="bg-secondary/30 border-border/50 text-foreground placeholder:text-muted-foreground pr-10"
+                />
+                {error && <p style={{ color: "red" }}>{error.password}</p>}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             {/* Confirm Password Input */}
-            <div
-              className="space-y-2 animate-slideUp"
-              style={{ animationDelay: '0.35s' }}
-            >
-              <label htmlFor="confirmPassword" className="block text-sm text-muted-foreground">
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-foreground mb-2"
+              >
                 Confirm Password
               </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                name="confirmPassword"
-                placeholder="••••••••"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 bg-input/50 border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 transition-all duration-300 hover:border-accent/50 ${
-                  !passwordMatch && formData.confirmPassword
-                    ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/30'
-                    : 'border-accent/30 focus:border-accent focus:ring-accent/30'
-                }`}
-              />
-              {!passwordMatch && formData.confirmPassword && (
-                <p className="text-xs text-red-500">Passwords do not match</p>
-              )}
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="bg-secondary/30 border-border/50 text-foreground placeholder:text-muted-foreground pr-10"
+                />
+                {error && (
+                  <p style={{ color: "red" }}>{error.confirmPassword}</p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
             </div>
 
-            {/* Signup Button */}
-            <button
-              type="submit"
-              disabled={isLoading || !passwordMatch || !formData.fullName || !formData.email}
-              className="w-full py-3 bg-gradient-to-r from-accent to-blue-400 hover:from-accent hover:to-blue-300 disabled:from-accent/50 disabled:to-blue-400/50 text-background font-bold rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:scale-100 relative overflow-hidden group animate-slideUp mt-2"
-              style={{ animationDelay: '0.4s' }}
-            >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
+            {/* Terms and Conditions */}
+            {/* <div className="flex items-start gap-3 mt-5">
+              <Checkbox
+                id="terms"
+                checked={agreeToTerms}
+                onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                className="mt-1"
+              />
+              <label htmlFor="terms" className="text-xs text-muted-foreground cursor-pointer">
+                I agree to the{' '}
+                <Link href="#" className="text-primary hover:text-primary/80 transition">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="#" className="text-primary hover:text-primary/80 transition">
+                  Privacy Policy
+                </Link>
+              </label>
+            </div> */}
 
-              <span className="relative flex items-center justify-center">
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    Creating Account...
-                  </>
-                ) : (
-                  'Create Account'
-                )}
-              </span>
-            </button>
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/80 font-semibold py-2 h-auto mt-6 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
+            >
+              {isLoading ? "Creating Account..." : "Create Account"}
+            </Button>
           </form>
 
-          {/* Footer Links */}
-          <div
-            className="flex justify-center items-center mt-6 text-sm animate-slideUp"
-            style={{ animationDelay: '0.5s' }}
-          >
-            <span className="text-muted-foreground">Already have an account?</span>
-            <Link
-              href="/login"
-              className="ml-2 text-accent hover:text-blue-300 transition-colors duration-300 font-medium"
-            >
-              Log in
-            </Link>
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/50"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-card/50 text-muted-foreground">
+                Or sign up with
+              </span>
+            </div>
           </div>
 
-          {/* Bottom accent line */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-accent to-transparent rounded-full blur-md" />
-        </div>
+          {/* Social Signup */}
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="border-border/50 hover:bg-secondary/20 text-foreground"
+            >
+              GitHub
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="border-border/50 hover:bg-secondary/20 text-foreground"
+            >
+              Google
+            </Button>
+          </div>
 
-        {/* Decorative floating elements */}
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          {/* Login Link */}
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Already have an account?{" "}
+            <Link
+              href="/user/login"
+              className="text-primary hover:text-primary/80 font-medium transition"
+            >
+              Sign in here
+            </Link>
+          </p>
+        </Card>
+
+        {/* Back to Home */}
+        <div className="text-center mt-6">
+          <Link
+            href="/"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            ← Back to home
+          </Link>
+        </div>
       </div>
     </div>
   );

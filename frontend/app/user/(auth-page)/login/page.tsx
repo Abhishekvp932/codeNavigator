@@ -1,330 +1,200 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [error,setError] = useState({email:'',password:''});
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
+  const validation = ()=>{
+
+    const newError = {email:"",password: ""};
+    let isValidate = true
+    if(!email){
+      newError.email = "Email is Required"
+      isValidate = false
+    }
+
+    if(!password){
+      newError.password = "Password is Required"
+      isValidate = false
+    }
+    setError(newError);
+
+    return isValidate;
+  }
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if(!validation()) return;
     setIsLoading(true);
+    // Simulate login
     setTimeout(() => {
       setIsLoading(false);
-      console.log('Login attempt:', { email, password });
-    }, 2000);
+      alert("Login functionality coming soon!");
+    }, 1500);
   };
 
-  if (!mounted) return null;
-
   return (
-    <div className="min-h-screen w-full bg-background relative overflow-hidden flex items-center justify-center">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-blue-950/20" />
-
-      {/* Floating code particles background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-accent/10 font-mono text-sm animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${i * 0.3}s`,
-              fontSize: `${10 + Math.random() * 12}px`,
-            }}
-          >
-            {['const', 'function', 'return', 'if', 'else', 'async', 'await'][
-              i % 7
-            ]}
-          </div>
-        ))}
-      </div>
-
-      {/* Animated grid background */}
-      <svg  
-        className="absolute inset-0 w-full h-full opacity-20"
-        preserveAspectRatio="none"
-        viewBox="0 0 1024 1024"
-      >
-        {/* Horizontal lines with glow */}
-        {[100, 250, 400, 550, 700, 850].map((y) => (
-          <line
-            key={`h-${y}`}
-            x1="0"
-            y1={y}
-            x2="1024"
-            y2={y}
-            stroke="url(#gridGradient)"
-            strokeWidth="1"
-            opacity="0.3"
-          />
-        ))}
-        {/* Vertical lines with glow */}
-        {[100, 250, 400, 550, 700, 850].map((x) => (
-          <line
-            key={`v-${x}`}
-            x1={x}
-            y1="0"
-            x2={x}
-            y2="1024"
-            stroke="url(#gridGradient)"
-            strokeWidth="1"
-            opacity="0.3"
-          />
-        ))}
-        {/* Glowing connection nodes */}
-        {[
-          { cx: 100, cy: 100 },
-          { cx: 250, cy: 250 },
-          { cx: 400, cy: 100 },
-          { cx: 700, cy: 550 },
-          { cx: 850, cy: 700 },
-          { cx: 100, cy: 700 },
-          { cx: 550, cy: 850 },
-          { cx: 900, cy: 900 },
-          { cx: 150, cy: 400 },
-        ].map((node, i) => (
-          <circle
-            key={`node-${i}`}
-            cx={node.cx}
-            cy={node.cy}
-            r="6"
-            fill="url(#nodeGradient)"
-            opacity="0.6"
-            className="animate-pulseGlow"
-            style={{ animationDelay: `${i * 0.15}s` }}
-          />
-        ))}
-        {/* Gradient definitions */}
-        <defs>
-          <linearGradient id="gridGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00d9ff" stopOpacity="0" />
-            <stop offset="50%" stopColor="#00d9ff" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#00d9ff" stopOpacity="0" />
-          </linearGradient>
-          <radialGradient id="nodeGradient">
-            <stop offset="0%" stopColor="#00d9ff" stopOpacity="1" />
-            <stop offset="100%" stopColor="#00d9ff" stopOpacity="0.3" />
-          </radialGradient>
-        </defs>
-      </svg>
-
-      {/* Main container */}
-      <div className="relative z-10 w-full max-w-md mx-auto px-6">
-        {/* Outer glow effect */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 blur-2xl" />
-
-        {/* Login card */}
-        <div className="relative backdrop-blur-md border border-accent/30 rounded-2xl p-8 md:p-10 bg-card/40 animate-slideUp">
-          {/* Top accent line */}
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-accent to-transparent rounded-full blur-md" />
-
-          {/* Animated logo */}
-          <div className="flex justify-center mb-8">
-            <div className="relative w-20 h-20 animate-float">
-              <svg
-                viewBox="0 0 100 100"
-                className="w-full h-full"
-                fill="none"
-                stroke="#00d9ff"
-                strokeWidth="2"
-              >
-                {/* Outer circle */}
-                <circle
-                  cx="50"
-                  cy="25"
-                  r="12"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0s' }}
-                />
-                <circle
-                  cx="35"
-                  cy="50"
-                  r="10"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.3s' }}
-                />
-                <circle
-                  cx="65"
-                  cy="50"
-                  r="10"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.6s' }}
-                />
-                <circle
-                  cx="50"
-                  cy="75"
-                  r="12"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.9s' }}
-                />
-
-                {/* Center element */}
-                <circle cx="50" cy="50" r="6" fill="#00d9ff" opacity="0.8" />
-
-                {/* Connecting lines with animation */}
-                <line
-                  x1="50"
-                  y1="37"
-                  x2="50"
-                  y2="44"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.1s' }}
-                />
-                <line
-                  x1="50"
-                  y1="56"
-                  x2="50"
-                  y2="63"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.2s' }}
-                />
-                <line
-                  x1="42"
-                  y1="50"
-                  x2="48"
-                  y2="50"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.3s' }}
-                />
-                <line
-                  x1="52"
-                  y1="50"
-                  x2="58"
-                  y2="50"
-                  className="animate-codeFlow"
-                  style={{ animationDelay: '0.4s' }}
-                />
-              </svg>
-
-              {/* Glow ring around logo */}
-              <div className="absolute inset-0 border-2 border-accent/30 rounded-full animate-pulse" />
+    <div className="min-h-screen relative overflow-hidden bg-background flex items-center justify-center px-4">
+      {/* Decorative Blobs */}
+      <div className="absolute top-1/4 -left-10 w-72 h-72 bg-primary/20 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob"></div>
+      <div className="absolute bottom-1/4 -right-10 w-72 h-72 bg-accent/20 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+      
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo and Branding */}
+        <div className="flex flex-col items-center mb-8">
+          <Link href="/" className="flex items-center gap-3 mb-6">
+            <div className="relative w-10 h-10">
+              <Image
+                src="/cn-sm-logo.svg"
+                alt="Code Navigator Logo"
+                fill
+                className="object-cover rounded-lg"
+              />
             </div>
-          </div>
+            <span className="text-xl font-bold text-foreground">
+              CodeNavigator
+            </span>
+          </Link>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-muted-foreground text-center">
+            Sign in to continue visualizing your code
+          </p>
+        </div>
 
-          {/* Title with gradient */}
-          <div className="text-center mb-8 animate-slideUp" style={{ animationDelay: '0.1s' }}>
-            <h1 className="text-4xl font-bold tracking-tight mb-2">
-              <span className="text-foreground">Code</span>
-              <span className="bg-gradient-to-r from-accent to-blue-400 bg-clip-text text-transparent">
-                Navigator
-              </span>
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Visualize Your Code Flow
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Login Card */}
+        <Card className="border border-border/50 backdrop-blur-md bg-card/80 p-8 shadow-2xl shadow-black/40">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Input */}
-            <div
-              className="space-y-2 animate-slideUp"
-              style={{ animationDelay: '0.2s' }}
-            >
-              <label htmlFor="email" className="block text-sm text-muted-foreground">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-foreground mb-2"
+              >
                 Email Address
               </label>
-              <input
+              <Input
                 id="email"
                 type="email"
-                placeholder="dev@codenavigator.com"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-input/50 border border-accent/30 rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-accent/50"
+                className="bg-secondary/30 border-border/50 text-foreground placeholder:text-muted-foreground"
+                
               />
+              {error && <p style={{color:'red'}}>{error.email}</p>}
             </div>
 
             {/* Password Input */}
-            <div
-              className="space-y-2 animate-slideUp"
-              style={{ animationDelay: '0.3s' }}
-            >
-              <label htmlFor="password" className="block text-sm text-muted-foreground">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-input/50 border border-accent/30 rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-accent/50"
-              />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-foreground"
+                >
+                  Password
+                </label>
+                <Link
+                  href="#"
+                  className="text-xs text-primary hover:text-primary/80 transition"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-secondary/30 border-border/50 text-foreground placeholder:text-muted-foreground pr-10"
+                  
+                />
+                {error && <p style={{color:'red'}}>{error.password}</p>}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
-            {/* Login Button */}
-            <button
+            {/* Submit Button */}
+            <Button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-accent to-blue-400 hover:from-accent hover:to-blue-300 disabled:from-accent/50 disabled:to-blue-400/50 text-background font-bold rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:scale-100 relative overflow-hidden group animate-slideUp"
-              style={{ animationDelay: '0.4s' }}
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/80 font-semibold py-2 h-auto shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
             >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
-
-              <span className="relative flex items-center justify-center">
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    Authenticating...
-                  </>
-                ) : (
-                  'Log In to Navigator'
-                )}
-              </span>
-            </button>
+              {isLoading ? "Signing in..." : "Sign In"}
+            </Button>
           </form>
 
-          {/* Footer Links */}
-          <div
-            className="flex justify-between items-center mt-8 text-sm animate-slideUp"
-            style={{ animationDelay: '0.5s' }}
-          >
-            <a
-              href="#"
-              className="text-muted-foreground hover:text-accent transition-colors duration-300"
-            >
-              Forgot password?
-            </a>
-            <Link
-              href="/user/signup"
-              className="text-muted-foreground hover:text-accent transition-colors duration-300"
-            >
-              Create account
-            </Link>
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/50"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-card/50 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
           </div>
 
-          {/* Bottom accent line */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-accent to-transparent rounded-full blur-md" />
-        </div>
+          {/* Social Login */}
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="border-border/50 hover:bg-secondary/20 text-foreground"
+            >
+              GitHub
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="border-border/50 hover:bg-secondary/20 text-foreground"
+            >
+              Google
+            </Button>
+          </div>
 
-        {/* Decorative floating elements */}
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          {/* Sign Up Link */}
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Dont have an account?{" "}
+            <Link
+              href="/user/signup"
+              className="text-primary hover:text-primary/80 font-medium transition"
+            >
+              Sign up here
+            </Link>
+          </p>
+        </Card>
+
+        {/* Back to Home */}
+        <div className="text-center mt-6">
+          <Link
+            href="/user/home"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            ← Back to home
+          </Link>
+        </div>
       </div>
     </div>
   );
