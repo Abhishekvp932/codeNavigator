@@ -33,12 +33,12 @@ export function FlowVisualizer() {
           ...node,
           style: {
             ...node.style,
-            background: '#a6e3a1', // Highlight color
-            color: '#11111b',
-            border: '2px solid #94e2d5',
-            boxShadow: '0 0 15px #a6e3a1',
-            transform: 'scale(1.05)',
-            transition: 'all 0.2s ease'
+            background: 'var(--primary)', // Highlight color
+            color: 'var(--primary-foreground)',
+            border: '2px solid var(--primary)',
+            boxShadow: '0 0 20px var(--primary)',
+            transform: 'scale(1.08)',
+            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
           }
         };
       }
@@ -54,13 +54,13 @@ export function FlowVisualizer() {
         return {
           ...edge,
           animated: true,
-          style: { stroke: '#a6e3a1', strokeWidth: 3 }
+          style: { stroke: 'var(--primary)', strokeWidth: 3 }
         };
       }
       return {
         ...edge,
         animated: false,
-        style: { stroke: '#cba6f7', strokeWidth: 1 }
+        style: { stroke: 'var(--secondary)', strokeWidth: 1.5 }
       };
     });
     setEdges(highlightedEdges);
@@ -69,9 +69,10 @@ export function FlowVisualizer() {
   const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   return (
-    <div className="flex-1 h-full bg-[#181825] relative">
-      <div className="absolute top-0 left-0 p-3 bg-[#11111b] border-b border-r border-[#313244] text-[#a6adc8] font-semibold text-sm z-10 rounded-br-lg opacity-80 backdrop-blur-sm">
-        Visualization
+    <div className="flex-1 h-full bg-background relative overflow-hidden group/flow">
+      <div className="absolute top-3 left-3 z-10 bg-card/60 backdrop-blur-md border border-border/50 text-muted-foreground px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-black/20 group cursor-default hover:bg-card/90 transition-all">
+        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+        Control Flow Map
       </div>
       <ReactFlow
         nodes={nodes}
@@ -84,16 +85,16 @@ export function FlowVisualizer() {
         colorMode="dark"
       >
         <Controls 
-          className="bg-[#1e1e2e] border-[#313244] fill-[#cdd6f4]" 
+          className="bg-card border-border fill-foreground rounded-md shadow-lg" 
           position="bottom-left"
         />
         <MiniMap 
-          nodeColor={(n) => n.style?.background?.toString() || '#1e1e2e'} 
-          maskColor="rgba(17, 17, 27, 0.7)"
-          className="bg-[#11111b] border-[#313244]" 
+          nodeColor={(n) => n.style?.background?.toString() || 'var(--card)'} 
+          maskColor="rgba(0,0,0,0.4)"
+          className="bg-card border-border rounded-lg overflow-hidden shadow-2xl" 
           position="bottom-right"
         />
-        <Background gap={20} size={1} color="#313244" />
+        <Background gap={24} size={1} color="var(--border)" />
       </ReactFlow>
     </div>
   );

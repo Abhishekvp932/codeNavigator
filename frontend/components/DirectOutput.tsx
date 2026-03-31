@@ -56,25 +56,27 @@ export function DirectOutput() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#181825]">
-      <div className="flex justify-between items-center p-2 bg-[#11111b] border-b border-[#313244]">
-        <span className="text-[#a6adc8] font-semibold text-sm px-2">Instant Output</span>
+    <div className="flex flex-col h-full bg-card overflow-hidden">
+      <div className="flex justify-between items-center px-3 py-1.5 bg-secondary/50 border-b border-border shrink-0">
+        <span className="text-muted-foreground font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 pl-1">
+          Instant Runner
+        </span>
         <button 
           onClick={handleInstantRun}
           disabled={isRunning}
-          className="flex items-center gap-1 bg-[#89b4fa] hover:bg-opacity-90 text-[#11111b] px-3 py-1 rounded text-sm font-medium transition-colors disabled:opacity-50"
+          className="flex items-center gap-1.5 bg-accent text-accent-foreground px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95 disabled:opacity-30 shadow-sm"
         >
-          <Play size={14} fill="currentColor" /> {isRunning ? 'Running...' : 'Run Instant'}
+          <Play size={10} fill="currentColor" /> {isRunning ? 'Running' : 'Instant Run'}
         </button>
       </div>
-      <div className="flex-1 p-4 overflow-auto text-sm font-mono space-y-1 bg-[#181825]">
+      <div className="flex-1 p-4 overflow-auto text-[13px] font-mono space-y-1.5 bg-card/30 custom-scrollbar">
         {outputLines.length === 0 ? (
-          <div className="text-[#6c7086] italic text-xs">Click "Run Instant" to see the direct javascript output...</div>
+          <div className="text-muted-foreground/30 italic text-[11px] font-sans">Run code to see immediate results...</div>
         ) : (
           outputLines.map((msg, idx) => (
-            <div key={idx} className={`py-1 border-opacity-50 ${msg.startsWith('Error') || msg.startsWith('Exception') ? 'text-[#f38ba8]' : 'text-[#cdd6f4]'}`}>
-              <span className="text-[#a6adc8] mr-2 opacity-50">&gt;</span>
-              {msg}
+            <div key={idx} className={`pb-1.5 border-b border-border/30 flex gap-3 transition-colors hover:bg-white/5 px-2 -mx-2 rounded ${msg.startsWith('Error') || msg.startsWith('Exception') ? 'text-destructive/90' : 'text-foreground/90'}`}>
+              <span className="text-accent opacity-50 shrink-0 select-none">❯</span>
+              <span className="break-all">{msg}</span>
             </div>
           ))
         )}

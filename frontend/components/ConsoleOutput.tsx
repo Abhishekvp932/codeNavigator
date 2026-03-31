@@ -12,18 +12,22 @@ export function ConsoleOutput() {
   }, [consoleOutput]);
 
   return (
-    <div className="flex flex-col h-1/2 bg-[#1e1e2e]">
-      <div className="p-3 bg-[#11111b] border-b border-[#313244] text-[#a6adc8] font-semibold text-sm flex justify-between">
-        <span>Console</span>
+    <div className="flex flex-col h-1/2 bg-card overflow-hidden">
+      <div className="px-3 py-2 bg-secondary/50 border-b border-border text-muted-foreground font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 shrink-0">
+        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        Console
       </div>
-      <div className="flex-1 p-4 overflow-auto text-sm font-mono space-y-1 bg-[#181825]">
+      <div className="flex-1 p-4 overflow-auto text-[13px] font-mono space-y-1.5 bg-card/30 custom-scrollbar">
         {consoleOutput.length === 0 ? (
-          <div className="text-[#6c7086] italic">Ready...</div>
+          <div className="text-muted-foreground/30 italic text-[11px] font-sans flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+            Ready
+          </div>
         ) : (
           consoleOutput.map((msg, idx) => (
-            <div key={idx} className="text-[#cdd6f4] border-b border-[#313244] py-1 border-opacity-50">
-              <span className="text-[#a6adc8] mr-2 opacity-50">&gt;</span>
-              {msg}
+            <div key={idx} className="text-foreground/90 border-b border-border/30 pb-1.5 flex gap-3 transition-colors hover:bg-white/5 px-2 -mx-2 rounded">
+              <span className="text-primary opacity-50 shrink-0 select-none">❯</span>
+              <span className="break-all">{msg}</span>
             </div>
           ))
         )}

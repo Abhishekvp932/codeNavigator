@@ -10,11 +10,14 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});        
+});
 
 export const metadata: Metadata = {
   title: "Code Navigator",
   description: "Code Navigator",
+  icons: {
+    icon: '/cn-sm-logo.svg',
+  },
 };
 
 export default function RootLayout({

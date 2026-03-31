@@ -6,23 +6,47 @@ export function VariableTracker() {
   const variables = useCodeStore((state) => state.executionState.variables);
 
   return (
-    <div className="flex flex-col h-1/2 border-b border-[#313244]">
-      <div className="p-3 bg-[#11111b] border-b border-[#313244] text-[#a6adc8] font-semibold text-sm">
-        Variables Scope
+    <div className="flex flex-col h-1/2 bg-card border-b border-border overflow-hidden">
+      <div className="px-3 py-2 bg-secondary/50 border-b border-border text-muted-foreground font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 shrink-0">
+        <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+        Global Scope
       </div>
-      <div className="flex-1 p-4 overflow-auto bg-[#181825]">
+      <div className="flex-1 p-3 overflow-auto bg-card/30 custom-scrollbar">
         {Object.entries(variables).length === 0 ? (
-          <div className="text-[#6c7086] text-sm italic">No variables in scope.</div>
+          <div className="text-muted-foreground/30 italic text-[11px] font-sans text-center mt-4">No global variables</div>
         ) : (
-          <div className="space-y-2">
-            {Object.entries(variables).map(([key, value]) => (
-              <div key={key} className="flex justify-between items-center text-sm font-mono border border-[#313244] rounded bg-[#1e1e2e] py-2 px-3">
-                <span className="text-[#89b4fa] truncate mr-2" title={key}>{key}</span>
-                <span className="text-[#a6e3a1] truncate font-bold" title={String(value)}>
-                  {value === null ? 'null' : typeof value === 'undefined' ? 'undefined' : String(value)}
-                </span>
-              </div>
-            ))}
+          <div className="space-y-1.5">
+            {Object.entries(variables).map(([key, value]) => {
+              let displayValue = String(value);
+              let valueClass = "text-foreground";
+              
+              if (value && typeof value === 'object' && '__ref' in value) {
+                displayValue = `ref:${(value as any).__ref}`;
+                valueClass = "text-[#cba6f7] bg-[#cba6f7]/10 px-1 rounded font-bold";
+              } else if (typeof value === 'number') {
+                valueClass = "text-[#fab387]"; // Peach/Orange
+              } else if (typeof value === 'string') {
+                valueClass = "text-[#a6e3a1]"; // Green
+                displayValue = `'${value}'`;
+              } else if (typeof value === 'boolean') {
+                valueClass = "text-[#89b4fa] italic"; // Blue
+              } else if (value === null) {
+                displayValue = 'null';
+                valueClass = "text-[#f38ba8]/70"; // Red
+              } else if (typeof value === 'undefined') {
+                displayValue = 'undefined';
+                valueClass = "text-[#9399b2] italic"; // Overlay
+              }
+
+              return (
+                <div key={key} className="flex justify-between items-center text-[11px] font-mono border border-border/30 rounded-md bg-background/50 py-1.5 px-2.5 group/var transition-all hover:border-border/60">
+                  <span className="text-[#89b4fa]/80 group-hover/var:text-[#89b4fa] transition-colors truncate mr-2" title={key}>{key}</span>
+                  <span className={`${valueClass} truncate font-bold max-w-[120px] transition-all`} title={displayValue}>
+                    {displayValue}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

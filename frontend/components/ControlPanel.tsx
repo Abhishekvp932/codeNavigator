@@ -108,39 +108,60 @@ export function ControlPanel() {
   }
 
   return (
-    <div className="flex items-center gap-3 bg-[#11111b] p-2 border-b border-[#313244] rounded max-w-fit mx-auto shadow-lg">
-      <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4 bg-card/80 backdrop-blur-md px-4 py-2 border border-border shadow-2xl rounded-full transition-all duration-300 hover:shadow-primary/10">
+      <div className="flex items-center gap-2.5">
         {!isRunning || isPaused ? (
-          <button onClick={isRunning ? handleResume : handleStart} className="flex items-center gap-1.5 bg-[#a6e3a1] text-[#11111b] px-3 py-1.5 rounded text-sm font-medium hover:bg-opacity-90 transition-colors">
-            <Play size={14} fill="currentColor" /> {isRunning ? "Resume" : "Run Code"}
+          <button 
+            onClick={isRunning ? handleResume : handleStart} 
+            className="group flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20"
+          >
+            <Play size={12} fill="currentColor" className="group-hover:scale-110 transition-transform" /> 
+            {isRunning ? "Resume" : "Run Code"}
           </button>
         ) : (
-          <button onClick={handlePause} className="flex items-center gap-1.5 bg-[#f9e2af] text-[#11111b] px-3 py-1.5 rounded text-sm font-medium hover:bg-opacity-90 transition-colors">
-            <Pause size={14} fill="currentColor" /> Pause
+          <button 
+            onClick={handlePause} 
+            className="group flex items-center gap-2 bg-muted text-foreground px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-secondary active:scale-95 transition-all shadow-md"
+          >
+            <Pause size={12} fill="currentColor" className="group-hover:scale-110 transition-transform" /> 
+            Pause
           </button>
         )}
         
-        <button onClick={handleStep} className="flex items-center gap-1.5 bg-[#89b4fa] text-[#11111b] px-3 py-1.5 rounded text-sm font-medium hover:bg-opacity-90 transition-colors">
-          <StepForward size={14} /> Step
+        <button 
+          onClick={handleStep} 
+          className="group flex items-center gap-2 bg-accent text-accent-foreground px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-accent/20"
+        >
+          <StepForward size={12} className="group-hover:translate-x-0.5 transition-transform" /> 
+          Step
         </button>
 
-        <button onClick={handleStop} disabled={!isRunning} className="flex items-center gap-1.5 bg-[#f38ba8] text-[#11111b] px-3 py-1.5 rounded text-sm font-medium hover:bg-opacity-90 transition-colors disabled:opacity-50">
-          <RotateCcw size={14} /> Stop & Reset
+        <button 
+          onClick={handleStop} 
+          disabled={!isRunning} 
+          className="group flex items-center gap-2 bg-destructive/10 text-destructive border border-destructive/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-destructive hover:text-destructive-foreground active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none"
+        >
+          <RotateCcw size={12} className="group-rotate-180 transition-transform duration-500" /> 
+          Reset
         </button>
       </div>
 
-      <div className="ml-2 flex items-center gap-2 text-[#a6adc8] text-[11px] font-medium tracking-wide">
-        <label className="uppercase">Speed:</label>
-        <input 
-          type="range" 
-          min="100" 
-          max="2000" 
-          step="100" 
-          value={speed} 
-          onChange={(e) => setSpeed(Number(e.target.value))}
-          className="w-20 accent-[#cba6f7] h-1 bg-[#313244] rounded-lg appearance-none cursor-pointer"
-        />
-        <span className="w-10 text-right">{speed}ms</span>
+      <div className="h-6 w-px bg-border mx-1" />
+
+      <div className="flex items-center gap-3 text-muted-foreground text-[10px] font-bold uppercase tracking-widest pl-1">
+        <label className="opacity-70 whitespace-nowrap">Speed</label>
+        <div className="relative flex items-center group/slider">
+          <input 
+            type="range" 
+            min="100" 
+            max="2000" 
+            step="100" 
+            value={speed} 
+            onChange={(e) => setSpeed(Number(e.target.value))}
+            className="w-24 accent-primary h-1 bg-secondary rounded-full appearance-none cursor-pointer transition-all group-hover/slider:h-1.5"
+          />
+        </div>
+        <span className="w-12 text-right font-mono text-primary">{speed}ms</span>
       </div>
     </div>
   );
