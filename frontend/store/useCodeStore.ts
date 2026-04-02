@@ -35,8 +35,7 @@ const initialExecutionState: ExecutionState = {
   consoleOutput: [],
 };
 
-const defaultCode = `// CodeNavigator MVP
-// Type or paste your JavaScript code here to see it visualized...
+const defaultCode = `// Type or paste your JavaScript code here to see it visualized...
 let x = 10;
 let y = 20;
 let sum = x + y;  

@@ -8,7 +8,7 @@ export default function Header() {
           <span className="text-[10px] font-black text-primary-foreground italic">CN</span>
         </div>
         <h1 className="text-sm font-black tracking-tighter bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          CODE NAVIGATOR
+          CodeNavigator
         </h1>
         <div className="ml-4 px-2 py-0.5 rounded bg-secondary/50 border border-border/50 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
           IDE v2.5

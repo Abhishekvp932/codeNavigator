@@ -79,7 +79,7 @@ export default function LandingHeader() {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden pb-4 space-y-4">
-            <a
+            {/* <a
               href="#features"
               className="block text-muted-foreground hover:text-foreground transition-colors"
             >
@@ -96,7 +96,7 @@ export default function LandingHeader() {
               className="block text-muted-foreground hover:text-foreground transition-colors"
             >
               Docs
-            </a>
+            </a> */}
             <div className="flex flex-col gap-2 pt-4 border-t border-border">
               <Button
                 variant="ghost"

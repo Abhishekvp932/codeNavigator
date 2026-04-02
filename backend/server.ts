@@ -2,7 +2,7 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db";
 import cors from "cors";
-
+import authRouter from './routes/auth';
 dotenv.config();
 
 const app: Application = express();
@@ -14,6 +14,8 @@ app.use(cors({
   origin:"http://localhost:3000",
   credentials:true
 }));
+
+app.use('/api/auth',authRouter);
 
 const PORT = process.env.PORT || 4000;
 
