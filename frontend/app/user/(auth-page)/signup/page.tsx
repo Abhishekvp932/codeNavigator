@@ -10,8 +10,9 @@ import { Signup } from "@/service/auth";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { handleApiError } from "@/utils/handleApiError";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { setUser } from "@/redux/userSlice";
 
 /* ─────────────────────────────────────────
    ANIMATION STYLES
@@ -242,7 +243,7 @@ export default function SignupPage() {
   const [shakeFields, setShakeFields] = useState<Record<string,boolean>>({});
   const router = useRouter()
 
-
+  const dispatch = useDispatch();
     const user = useSelector((state:RootState)=> state.user.user);
 
     useEffect(()=>{
@@ -305,6 +306,13 @@ export default function SignupPage() {
     }
 
     toast.success(res.message);
+     dispatch(
+          setUser({
+              id: res?.user?.id,
+              name: res?.user?.name,
+              email: res?.user?.email,
+            }),
+          );
     router.push('/user/home');
 
   } catch (error) {
