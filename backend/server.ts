@@ -1,8 +1,8 @@
 import express, { Application } from "express";
 import dotenv from "dotenv";
-import connectDB from "./config/db";
+import connectDB from "./infrastructure/database/mongoDb";
 import cors from "cors";
-import authRouter from './routes/auth';
+import userRouter from './routes/user.routes';
 dotenv.config();
 
 const app: Application = express();
@@ -15,7 +15,7 @@ app.use(cors({
   credentials:true
 }));
 
-app.use('/api/auth',authRouter);
+app.use('/api/user',userRouter);
 
 const PORT = process.env.PORT || 4000;
 

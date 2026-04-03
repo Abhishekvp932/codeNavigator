@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Eye, EyeOff, Github, Mail, User, AtSign, Lock, ShieldCheck } from "lucide-react";
+import { Signup } from "@/service/auth";
+import { toast, ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { handleApiError } from "@/utils/handleApiError";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 /* ─────────────────────────────────────────
    ANIMATION STYLES
@@ -234,7 +240,16 @@ export default function SignupPage() {
   const [error, setError]       = useState({ fullName: "", email: "", password: "", confirmPassword: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [shakeFields, setShakeFields] = useState<Record<string,boolean>>({});
+  const router = useRouter()
 
+
+    const user = useSelector((state:RootState)=> state.user.user);
+
+    useEffect(()=>{
+    if(user){
+      router.push('/user/home');
+    }
+  },[router,user]);
   /* ── Original validation (unchanged) ── */
   const validation = () => {
     const newError = { fullName: "", email: "", password: "", confirmPassword: "" };
@@ -258,20 +273,47 @@ export default function SignupPage() {
   };
 
   /* ── Original handleSubmit + shake decoration ── */
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validation()) {
-      const fails: Record<string,boolean> = {};
-      if (!formData.fullName)                             fails.fullName = true;
-      if (!formData.email)                                fails.email    = true;
-      if (!formData.password)                             fails.password = true;
-      if (formData.password !== formData.confirmPassword) fails.confirmPassword = true;
-      setShakeFields(fails);
-      setTimeout(() => setShakeFields({}), 450);
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!validation()) {
+    const fails: Record<string, boolean> = {};
+
+    if (!formData.fullName) fails.fullName = true;
+    if (!formData.email) fails.email = true;
+    if (!formData.password) fails.password = true;
+    if (formData.password !== formData.confirmPassword)
+      fails.confirmPassword = true;
+
+    setShakeFields(fails);
+    setTimeout(() => setShakeFields({}), 450);
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    const res = await Signup(
+      formData.fullName,
+      formData.email,
+      formData.password
+    );
+
+    if (!res.success) {
+      toast.error(res.message);
       return;
     }
-    setIsLoading(true);
-  };
+
+    toast.success(res.message);
+    router.push('/user/home');
+
+  } catch (error) {
+    // console.log('signup error', error);
+   toast.error(handleApiError(error));
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const strength = getStrength(formData.password);
   const passwordsMatch = formData.confirmPassword && formData.password === formData.confirmPassword;
@@ -457,13 +499,13 @@ export default function SignupPage() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t" style={{ borderColor: 'rgba(99,102,241,.2)' }} />
               </div>
-              <div className="relative flex justify-center text-xs">
+              {/* <div className="relative flex justify-center text-xs">
                 <span className="px-3 text-muted-foreground">Or sign up with</span>
-              </div>
+              </div> */}
             </div>
 
             {/* Social Buttons */}
-            <div className="sg-f7 grid grid-cols-2 gap-3">
+            {/* <div className="sg-f7 grid grid-cols-2 gap-3">
               <button type="button" className="sg-social-btn flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium border transition-all duration-200"
                 style={{ borderColor: 'rgba(99,102,241,.25)', background: 'rgba(99,102,241,.05)' }}>
                 <Github size={16} /> GitHub
@@ -472,7 +514,7 @@ export default function SignupPage() {
                 style={{ borderColor: 'rgba(99,102,241,.25)', background: 'rgba(99,102,241,.05)' }}>
                 <Mail size={16} /> Google
               </button>
-            </div>
+            </div> */}
 
             {/* Login link */}
             <p className="sg-f8 text-center text-sm text-muted-foreground mt-6">
@@ -496,6 +538,7 @@ export default function SignupPage() {
           </Link>
         </div>
       </div>
+      <ToastContainer autoClose={250}/>
     </div>
   );
 }

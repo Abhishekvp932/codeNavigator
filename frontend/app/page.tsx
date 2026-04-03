@@ -333,13 +333,13 @@ const features = [
   { icon: <Eye className="w-5 h-5" />, title: 'Visual Code Explanation', description: 'See what your code does with interactive visual representations and highlighted execution paths.' },
   { icon: <GitBranch className="w-5 h-5" />, title: 'Code Flowchart Generator', description: 'Automatically generate flowcharts that visualize the logic and control flow of your code.' },
   { icon: <Zap className="w-5 h-5" />, title: 'Step-by-Step Execution', description: 'Watch your code execute line-by-line with variable values, memory state, and program flow visualization.' },
-  { icon: <Brain className="w-5 h-5" />, title: 'AI Code Explanations', description: 'Get detailed AI-powered explanations and intelligent suggestions for improvements and best practices.' },
+  // { icon: <Brain className="w-5 h-5" />, title: 'AI Code Explanations', description: 'Get detailed AI-powered explanations and intelligent suggestions for improvements and best practices.' },
   { icon: <Database className="w-5 h-5" />, title: 'Data Structure Visualizer', description: 'Visualize arrays, linked lists, trees, graphs, and complex data structures as they change in real-time.' },
-  { icon: <Lightbulb className="w-5 h-5" />, title: 'Smart Suggestions', description: 'Get AI-powered recommendations for optimization, refactoring, and best practices in your code.' },
+  // { icon: <Lightbulb className="w-5 h-5" />, title: 'Smart Suggestions', description: 'Get AI-powered recommendations for optimization, refactoring, and best practices in your code.' },
 ];
 
-const TICKER_ITEMS = ['Visual Flowcharts', 'AI Explanations', 'Step-by-Step Execution', 'Data Structures', 'Smart Suggestions', 'Code Insights'];
-const TYPEWRITER_WORDS = ['Visual Insights', 'AI Explanations', 'Live Flowcharts', 'Deep Understanding'];
+const TICKER_ITEMS = ['Visual Flowcharts', 'Step-by-Step Execution', 'Data Structures', 'Code Insights'];
+const TYPEWRITER_WORDS = ['Visual Insights', 'Live Flowcharts', 'Deep Understanding'];
 
 const STATS = [
   { value: 50000, suffix: '+', label: 'Developers' },
@@ -411,11 +411,11 @@ export default function LandingPage() {
           <p className="lp-reveal text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed"
             data-delay="200"
             style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            Understand any code through visual flowcharts, step-by-step execution flows, AI explanations, and interactive data structure visualizations. Perfect for learning, debugging, and teaching.
+            Understand any code through visual flowcharts, step-by-step execution flows, and interactive data structure visualizations. Perfect for learning, debugging, and teaching.
           </p>
 
           {/* CTA buttons */}
-          <div className="lp-reveal flex flex-col sm:flex-row gap-4 justify-center mb-16" data-delay="300">
+          {/* <div className="lp-reveal flex flex-col sm:flex-row gap-4 justify-center mb-16" data-delay="300">
             <button className="lp-btn-glow inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-white font-semibold text-base"
               style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)', boxShadow: '0 0 32px rgba(99,102,241,.45)' }}>
               Get Started Free <ArrowRight className="w-4 h-4" />
@@ -424,7 +424,7 @@ export default function LandingPage() {
               style={{ border: '1px solid rgba(99,102,241,.4)', backdropFilter: 'blur(8px)' }}>
               Watch Demo
             </button>
-          </div>
+          </div> */}
 
           {/* Stats */}
           {/* <div className="lp-reveal grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto" data-delay="400">

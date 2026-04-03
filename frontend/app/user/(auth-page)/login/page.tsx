@@ -7,6 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Eye, EyeOff, Github, Mail } from "lucide-react";
+import { Login } from "@/service/auth";
+import { toast, ToastContainer } from "react-toastify";
+import { handleApiError } from "@/utils/handleApiError";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "@/redux/userSlice";
+import { RootState } from "@/redux/store";
 
 /* ─────────────────────────────────────────
    ANIMATION STYLES
@@ -189,7 +196,7 @@ const PARTICLES = Array.from({ length: 14 }, (_, i) => ({
   size: `${3 + Math.random() * 3.5}px`,
   dur: `${2.8 + Math.random() * 2.5}s`,
   delay: `${Math.random() * 4}s`,
-  color: i % 2 === 0 ? 'rgba(99,102,241,0.55)' : 'rgba(34,211,238,0.45)',
+  color: i % 2 === 0 ? "rgba(99,102,241,0.55)" : "rgba(34,211,238,0.45)",
 }));
 
 /* ─────────────────────────────────────────
@@ -200,33 +207,73 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState({ email: '', password: '' });
+  const [error, setError] = useState({ email: "", password: "" });
   const [shakeEmail, setShakeEmail] = useState(false);
-  const [shakePass, setShakePass]   = useState(false);
+  const [shakePass, setShakePass] = useState(false);
+  const router = useRouter();
 
+  const dispatch = useDispatch();
+
+  const user = useSelector((state: RootState) => state.user.user);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/user/home");
+    }
+  }, [router, user]);
   /* ── Original validation (unchanged) ── */
   const validation = () => {
     const newError = { email: "", password: "" };
     let isValidate = true;
-    if (!email) { newError.email = "Email is Required"; isValidate = false; }
-    if (!password) { newError.password = "Password is Required"; isValidate = false; }
+    if (!email) {
+      newError.email = "Email is Required";
+      isValidate = false;
+    }
+    if (!password) {
+      newError.password = "Password is Required";
+      isValidate = false;
+    }
     setError(newError);
     return isValidate;
   };
 
   /* ── Original handleSubmit + shake on error ── */
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validation()) {
-      if (!email)    { setShakeEmail(true); setTimeout(() => setShakeEmail(false), 400); }
-      if (!password) { setShakePass(true);  setTimeout(() => setShakePass(false),  400); }
+      if (!email) {
+        setShakeEmail(true);
+        setTimeout(() => setShakeEmail(false), 400);
+      }
+      if (!password) {
+        setShakePass(true);
+        setTimeout(() => setShakePass(false), 400);
+      }
       return;
     }
     setIsLoading(true);
-    setTimeout(() => {
+
+    try {
+      const res = await Login(email, password);
+      console.log("res", res);
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+      toast.success(res.message);
+      dispatch(
+        setUser({
+          id: res?.user?.id,
+          name: res?.user?.name,
+          email: res?.user?.email,
+        }),
+      );
+      router.push("/user/home");
+    } catch (error) {
+      toast.error(handleApiError(error));
+    } finally {
       setIsLoading(false);
-      alert("Login functionality coming soon!");
-    }, 1500);
+    }
   };
 
   return (
@@ -235,10 +282,14 @@ export default function LoginPage() {
 
       {/* ── Animated grid background ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
-        <div className="lp-grid-bg absolute -inset-12" style={{
-          backgroundImage: 'linear-gradient(rgba(99,102,241,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.06) 1px,transparent 1px)',
-          backgroundSize: '48px 48px',
-        }} />
+        <div
+          className="lp-grid-bg absolute -inset-12"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(99,102,241,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.06) 1px,transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
+        />
       </div>
 
       {/* ── Blobs ── */}
@@ -247,23 +298,41 @@ export default function LoginPage() {
       <div className="lp-blob-c absolute top-3/4 left-1/3 w-56 h-56 rounded-full bg-purple-500/15 filter blur-[56px] opacity-30 pointer-events-none" />
 
       {/* ── Particles ── */}
-      {PARTICLES.map(p => (
-        <span key={p.id} className="lp-particle" style={{
-          left: p.left, top: p.top,
-          width: p.size, height: p.size,
-          background: p.color,
-          ['--dur' as string]: p.dur,
-          ['--delay' as string]: p.delay,
-        }} />
+      {PARTICLES.map((p) => (
+        <span
+          key={p.id}
+          className="lp-particle"
+          style={{
+            left: p.left,
+            top: p.top,
+            width: p.size,
+            height: p.size,
+            background: p.color,
+            ["--dur" as string]: p.dur,
+            ["--delay" as string]: p.delay,
+          }}
+        />
       ))}
 
       {/* ── Decorative spinning rings (corners) ── */}
-      <div className="lp-ring-cw  absolute top-10 right-10 w-32 h-32 rounded-full pointer-events-none opacity-10"
-        style={{ border: '1.5px solid rgba(99,102,241,.7)', borderTopColor: 'transparent' }} />
-      <div className="lp-ring-ccw absolute top-10 right-10 w-20 h-20 rounded-full pointer-events-none opacity-10"
-        style={{ border: '1px dashed rgba(34,211,238,.6)' }} />
-      <div className="lp-ring-cw  absolute bottom-10 left-10 w-24 h-24 rounded-full pointer-events-none opacity-10"
-        style={{ border: '1.5px solid rgba(168,85,247,.6)', borderBottomColor: 'transparent' }} />
+      <div
+        className="lp-ring-cw  absolute top-10 right-10 w-32 h-32 rounded-full pointer-events-none opacity-10"
+        style={{
+          border: "1.5px solid rgba(99,102,241,.7)",
+          borderTopColor: "transparent",
+        }}
+      />
+      <div
+        className="lp-ring-ccw absolute top-10 right-10 w-20 h-20 rounded-full pointer-events-none opacity-10"
+        style={{ border: "1px dashed rgba(34,211,238,.6)" }}
+      />
+      <div
+        className="lp-ring-cw  absolute bottom-10 left-10 w-24 h-24 rounded-full pointer-events-none opacity-10"
+        style={{
+          border: "1.5px solid rgba(168,85,247,.6)",
+          borderBottomColor: "transparent",
+        }}
+      />
 
       {/* ── Floating dots (background depth) ── */}
       <div className="lp-dot-1 absolute top-1/3 right-1/4 w-2 h-2 rounded-full bg-indigo-400/40 pointer-events-none" />
@@ -271,44 +340,70 @@ export default function LoginPage() {
 
       {/* ── Main content ── */}
       <div className="w-full max-w-md relative z-10">
-
         {/* Logo + heading */}
         <div className="lp-header-enter flex flex-col items-center mb-8">
           <Link href="/" className="flex items-center gap-3 mb-6 group">
             <div className="relative w-10 h-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
               <div className="absolute inset-0 rounded-xl bg-indigo-500/30 blur-md group-hover:blur-lg transition-all" />
-              <Image src="/cn-sm-logo.svg" alt="Code Navigator Logo" fill className="object-cover rounded-lg relative z-10" />
+              <Image
+                src="/cn-sm-logo.svg"
+                alt="Code Navigator Logo"
+                fill
+                className="object-cover rounded-lg relative z-10"
+              />
             </div>
-            <span className="text-xl font-bold lp-gradient-text" style={{ fontFamily: "'Syne', sans-serif" }}>
+            <span
+              className="text-xl font-bold lp-gradient-text"
+              style={{ fontFamily: "'Syne', sans-serif" }}
+            >
               CodeNavigator
             </span>
           </Link>
 
-          <h1 className="text-3xl font-extrabold mb-2" style={{ fontFamily: "'Syne', sans-serif" }}>
+          <h1
+            className="text-3xl font-extrabold mb-2"
+            style={{ fontFamily: "'Syne', sans-serif" }}
+          >
             Welcome Back
           </h1>
-          <p className="text-muted-foreground text-center text-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p
+            className="text-muted-foreground text-center text-sm"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+          >
             Sign in to continue visualizing your code
           </p>
         </div>
 
         {/* ── Login Card ── */}
         <div className="lp-card-enter">
-          <Card className="border backdrop-blur-md p-8 shadow-2xl shadow-black/50 relative overflow-hidden"
-            style={{ borderColor: 'rgba(99,102,241,.25)', background: 'rgba(var(--card),0.85)' }}>
-
+          <Card
+            className="border backdrop-blur-md p-8 shadow-2xl shadow-black/50 relative overflow-hidden"
+            style={{
+              borderColor: "rgba(99,102,241,.25)",
+              background: "rgba(var(--card),0.85)",
+            }}
+          >
             {/* Card inner glow top */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
-              style={{ background: 'linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)' }} />
+            <div
+              className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
+              style={{
+                background:
+                  "linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)",
+              }}
+            />
             {/* Card corner accent */}
-            <div className="absolute top-3 right-3 w-10 h-10 rounded-full pointer-events-none opacity-15 lp-ring-cw"
-              style={{ border: '1px solid rgba(99,102,241,.8)' }} />
+            <div
+              className="absolute top-3 right-3 w-10 h-10 rounded-full pointer-events-none opacity-15 lp-ring-cw"
+              style={{ border: "1px solid rgba(99,102,241,.8)" }}
+            />
 
             <form onSubmit={handleSubmit} className="space-y-5">
-
               {/* Email */}
-              <div className={`lp-field-1 ${shakeEmail ? 'lp-shake' : ''}`}>
-                <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+              <div className={`lp-field-1 ${shakeEmail ? "lp-shake" : ""}`}>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
                   Email Address
                 </label>
                 <div className="lp-input-wrap">
@@ -317,24 +412,36 @@ export default function LoginPage() {
                     type="email"
                     placeholder="you@example.com"
                     value={email}
-                    onChange={(e) => { setEmail(e.target.value); if (error.email) setError(v => ({ ...v, email: '' })); }}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (error.email) setError((v) => ({ ...v, email: "" }));
+                    }}
                     className="bg-secondary/30 border-border/50 text-foreground placeholder:text-muted-foreground transition-colors duration-200"
                   />
                 </div>
                 {error.email && (
-                  <p className="lp-error text-xs mt-1.5 flex items-center gap-1" style={{ color: '#f87171' }}>
+                  <p
+                    className="lp-error text-xs mt-1.5 flex items-center gap-1"
+                    style={{ color: "#f87171" }}
+                  >
                     <span>⚠</span> {error.email}
                   </p>
                 )}
               </div>
 
               {/* Password */}
-              <div className={`lp-field-2 ${shakePass ? 'lp-shake' : ''}`}>
+              <div className={`lp-field-2 ${shakePass ? "lp-shake" : ""}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="password" className="block text-sm font-medium text-foreground">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-foreground"
+                  >
                     Password
                   </label>
-                  <Link href="#" className="text-xs text-primary hover:text-primary/80 transition-colors duration-200 hover:underline">
+                  <Link
+                    href="#"
+                    className="text-xs text-primary hover:text-primary/80 transition-colors duration-200 hover:underline"
+                  >
                     Forgot password?
                   </Link>
                 </div>
@@ -344,7 +451,11 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
-                    onChange={(e) => { setPassword(e.target.value); if (error.password) setError(v => ({ ...v, password: '' })); }}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (error.password)
+                        setError((v) => ({ ...v, password: "" }));
+                    }}
                     className="bg-secondary/30 border-border/50 text-foreground placeholder:text-muted-foreground pr-10 transition-colors duration-200"
                   />
                   <button
@@ -356,7 +467,10 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {error.password && (
-                  <p className="lp-error text-xs mt-1.5 flex items-center gap-1" style={{ color: '#f87171' }}>
+                  <p
+                    className="lp-error text-xs mt-1.5 flex items-center gap-1"
+                    style={{ color: "#f87171" }}
+                  >
                     <span>⚠</span> {error.password}
                   </p>
                 )}
@@ -368,16 +482,36 @@ export default function LoginPage() {
                   type="submit"
                   disabled={isLoading}
                   className="lp-btn-submit w-full text-white font-semibold py-2.5 rounded-md text-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)' }}>
+                  style={{
+                    background: "linear-gradient(135deg,#6366f1,#818cf8)",
+                  }}
+                >
                   {isLoading ? (
                     <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                      <svg
+                        className="animate-spin w-4 h-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
                       </svg>
                       Signing in…
                     </span>
-                  ) : 'Sign In'}
+                  ) : (
+                    "Sign In"
+                  )}
                 </button>
               </div>
             </form>
@@ -385,52 +519,83 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="lp-field-4 relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t" style={{ borderColor: 'rgba(99,102,241,.2)' }} />
+                <div
+                  className="w-full border-t"
+                  style={{ borderColor: "rgba(99,102,241,.2)" }}
+                />
               </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-3 text-muted-foreground" style={{ background: 'transparent' }}>
+              {/* <div className="relative flex justify-center text-xs">
+                <span
+                  className="px-3 text-muted-foreground"
+                  style={{ background: "transparent" }}
+                >
                   Or continue with
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Social Buttons */}
-            <div className="lp-field-5 grid grid-cols-2 gap-3">
-              <button type="button" className="lp-social-btn flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium border transition-all duration-200"
-                style={{ borderColor: 'rgba(99,102,241,.25)', background: 'rgba(99,102,241,.05)' }}>
+            {/* <div className="lp-field-5 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                className="lp-social-btn flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium border transition-all duration-200"
+                style={{
+                  borderColor: "rgba(99,102,241,.25)",
+                  background: "rgba(99,102,241,.05)",
+                }}
+              >
                 <Github size={16} />
                 GitHub
               </button>
-              <button type="button" className="lp-social-btn flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium border transition-all duration-200"
-                style={{ borderColor: 'rgba(99,102,241,.25)', background: 'rgba(99,102,241,.05)' }}>
+              <button
+                type="button"
+                className="lp-social-btn flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium border transition-all duration-200"
+                style={{
+                  borderColor: "rgba(99,102,241,.25)",
+                  background: "rgba(99,102,241,.05)",
+                }}
+              >
                 <Mail size={16} />
                 Google
               </button>
-            </div>
+            </div> */}
 
             {/* Sign Up Link */}
             <p className="lp-field-6 text-center text-sm text-muted-foreground mt-6">
               Don&apos;t have an account?{" "}
-              <Link href="/user/signup" className="text-primary hover:text-primary/80 font-medium transition-colors duration-200 hover:underline">
+              <Link
+                href="/user/signup"
+                className="text-primary hover:text-primary/80 font-medium transition-colors duration-200 hover:underline"
+              >
                 Sign up here
               </Link>
             </p>
 
             {/* Card bottom glow line */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-px"
-              style={{ background: 'linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent)' }} />
+            <div
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-px"
+              style={{
+                background:
+                  "linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent)",
+              }}
+            />
           </Card>
         </div>
 
         {/* Back to Home */}
         <div className="text-center mt-6">
-          <Link href="/user/home"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 group inline-flex items-center gap-1">
-            <span className="transition-transform duration-200 group-hover:-translate-x-1">←</span>
+          <Link
+            href="/"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 group inline-flex items-center gap-1"
+          >
+            <span className="transition-transform duration-200 group-hover:-translate-x-1">
+              ←
+            </span>
             Back to home
           </Link>
         </div>
       </div>
+      <ToastContainer autoClose={250} />
     </div>
   );
 }

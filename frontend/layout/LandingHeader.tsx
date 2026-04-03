@@ -1,13 +1,23 @@
 import { Button } from "@/components/ui/button";
+import { RootState } from "@/redux/store";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function LandingHeader() {
   const [isOpen, setIsOpen] = useState(false);
+  
+  
   const router = useRouter();
+  const user = useSelector((state:RootState)=> state.user.user);
 
+    useEffect(()=>{
+    if(user){
+      router.push('/user/home');
+    }
+  },[router,user]);
   const handleLoginPage = () => {
     router.push("/user/login");
   };
