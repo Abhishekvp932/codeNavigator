@@ -8,16 +8,15 @@ import { useSelector } from "react-redux";
 
 export default function LandingHeader() {
   const [isOpen, setIsOpen] = useState(false);
-  
-  
-  const router = useRouter();
-  const user = useSelector((state:RootState)=> state.user.user);
 
-    useEffect(()=>{
-    if(user){
-      router.push('/user/home');
+  const router = useRouter();
+  const user = useSelector((state: RootState) => state.user.user);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/user/home");
     }
-  },[router,user]);
+  }, [router, user]);
   const handleLoginPage = () => {
     router.push("/user/login");
   };
@@ -109,12 +108,16 @@ export default function LandingHeader() {
             </a> */}
             <div className="flex flex-col gap-2 pt-4 border-t border-border">
               <Button
+                onClick={handleLoginPage}
                 variant="ghost"
                 className="w-full text-foreground hover:text-primary"
               >
                 Log In
               </Button>
-              <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button
+                onClick={handleSignup}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              >
                 Sign Up
               </Button>
             </div>
