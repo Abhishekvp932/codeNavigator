@@ -36,9 +36,8 @@ export function FlowVisualizer() {
             background: 'var(--primary)', // Highlight color
             color: 'var(--primary-foreground)',
             border: '2px solid var(--primary)',
-            boxShadow: '0 0 20px var(--primary)',
-            transform: 'scale(1.08)',
-            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+            boxShadow: '0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent)',
+            transition: 'background 0.2s, border 0.2s, box-shadow 0.2s'
           }
         };
       }
@@ -69,11 +68,7 @@ export function FlowVisualizer() {
   const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   return (
-    <div className="flex-1 h-full bg-background relative overflow-hidden group/flow">
-      <div className="absolute top-3 left-3 z-10 bg-card/60 backdrop-blur-md border border-border/50 text-muted-foreground px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-black/20 group cursor-default hover:bg-card/90 transition-all">
-        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-        Control Flow Map
-      </div>
+    <div className="h-full w-full bg-background relative overflow-hidden">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -83,6 +78,9 @@ export function FlowVisualizer() {
         fitView
         className="w-full h-full"
         colorMode="dark"
+        minZoom={0.25}
+        maxZoom={1.8}
+        fitViewOptions={{ padding: 0.18 }}
       >
         <Controls 
           className="bg-card border-border fill-foreground rounded-md shadow-lg" 
@@ -90,8 +88,8 @@ export function FlowVisualizer() {
         />
         <MiniMap 
           nodeColor={(n) => n.style?.background?.toString() || 'var(--card)'} 
-          maskColor="rgba(0,0,0,0.4)"
-          className="bg-card border-border rounded-lg overflow-hidden shadow-2xl" 
+          maskColor="rgba(5,8,12,0.55)"
+          className="bg-card border-border rounded-md overflow-hidden shadow-xl" 
           position="bottom-right"
         />
         <Background gap={24} size={1} color="var(--border)" />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   ReactFlow,
   Background,
@@ -23,12 +23,12 @@ const ObjectNode = ({ data }: any) => {
   const isArray = data.obj.__type === 'array';
   
   return (
-    <div className="bg-background border-2 border-accent shadow-2xl shadow-black/50 rounded-lg text-[11px] text-foreground min-w-[140px] font-mono overflow-hidden transition-all hover:scale-105 active:scale-95 duration-300 group/node">
+    <div className="bg-card border border-border shadow-xl rounded-md text-[11px] text-foreground min-w-[140px] font-mono overflow-hidden transition-colors hover:border-accent group/node">
       <Handle type="target" position={Position.Top} className="opacity-0" />
       
-      <div className="bg-accent/10 text-accent text-[9px] px-2.5 py-1.5 border-b border-accent/20 font-black uppercase tracking-tighter flex justify-between items-center group-hover/node:bg-accent/20 transition-colors">
+      <div className="bg-secondary/70 text-muted-foreground text-[9px] px-2.5 py-1.5 border-b border-border font-semibold uppercase tracking-wide flex justify-between items-center group-hover/node:text-foreground transition-colors">
         <span className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+          <div className="size-1.5 rounded-full bg-accent" />
           {isArray ? 'Array' : 'Object'}
         </span>
         <span className="opacity-40 font-mono tracking-normal">{data.id}</span>
@@ -53,7 +53,7 @@ const ObjectNode = ({ data }: any) => {
 
           return (
             <div key={key} className="flex border-b border-border/40 last:border-0 hover:bg-white/5 relative group/row transition-colors">
-              <div className="w-[40px] px-2 py-1.5 border-r border-border/40 text-muted-foreground text-[9px] font-bold flex items-center justify-center bg-secondary/20 shrink-0 group-hover/row:text-foreground">
+              <div className="w-[40px] px-2 py-1.5 border-r border-border/40 text-muted-foreground text-[9px] font-semibold flex items-center justify-center bg-secondary/20 shrink-0 group-hover/row:text-foreground">
                 {key}
               </div>
               <div className={`flex-1 px-2.5 py-1.5 text-[10px] truncate flex items-center font-bold ${color}`} title={displayVal}>
@@ -77,7 +77,7 @@ export function HeapVisualizer() {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-  useMemo(() => {
+  useEffect(() => {
     let newNodes: Node[] = [];
     let newEdges: Edge[] = [];
 
@@ -144,10 +144,10 @@ export function HeapVisualizer() {
   if (Object.keys(heap).length === 0) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-background text-muted-foreground/40 p-8">
-        <div className="w-16 h-16 rounded-full bg-secondary/30 flex items-center justify-center mb-4 border border-border/50 shadow-inner">
+        <div className="w-14 h-14 rounded-lg bg-secondary/40 flex items-center justify-center mb-4 border border-border">
           <Database size={24} className="opacity-50" />
         </div>
-        <div className="text-xs font-bold uppercase tracking-widest mb-1 text-muted-foreground/60">Memory Sandbox Empty</div>
+        <div className="text-xs font-semibold uppercase tracking-wide mb-1 text-muted-foreground">Memory Sandbox Empty</div>
         <div className="text-[10px] max-w-[180px] text-center opacity-60 leading-relaxed">
           Initialize objects or linked lists in the editor to see them visually mapped in real-time.
         </div>
@@ -157,10 +157,6 @@ export function HeapVisualizer() {
 
   return (
     <div className="w-full h-full bg-background relative">
-      <div className="absolute top-3 left-3 z-10 bg-card/60 backdrop-blur-md border border-border/50 text-muted-foreground px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-black/20 group cursor-default hover:bg-card/90 transition-all">
-        <Database size={12} className="text-accent group-hover:rotate-12 transition-transform" />
-        Heap Memory Explorer
-      </div>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -169,8 +165,8 @@ export function HeapVisualizer() {
         onEdgesChange={onEdgesChange}
         fitView
         fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.5}
-        maxZoom={2}
+        minZoom={0.3}
+        maxZoom={1.8}
       >
         <Background color="var(--border)" gap={24} size={1} />
         <Controls showInteractive={false} className="bg-card border-border fill-foreground rounded-md shadow-lg" />

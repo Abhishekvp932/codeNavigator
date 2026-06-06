@@ -6,14 +6,16 @@ export function VariableTracker() {
   const variables = useCodeStore((state) => state.executionState.variables);
 
   return (
-    <div className="flex flex-col h-1/2 bg-card border-b border-border overflow-hidden">
-      <div className="px-3 py-2 bg-secondary/50 border-b border-border text-muted-foreground font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 shrink-0">
-        <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-        Global Scope
+    <div className="cn-panel flex h-full flex-col rounded-none border-0 overflow-hidden">
+      <div className="cn-panel-header">
+        <span className="cn-icon-label">
+          <span className="cn-status-dot" />
+          Global Scope
+        </span>
       </div>
-      <div className="flex-1 p-3 overflow-auto bg-card/30 custom-scrollbar">
+      <div className="flex-1 min-h-0 p-2 overflow-auto bg-[#0b1017] custom-scrollbar">
         {Object.entries(variables).length === 0 ? (
-          <div className="text-muted-foreground/30 italic text-[11px] font-sans text-center mt-4">No global variables</div>
+          <div className="text-muted-foreground text-[11px] font-sans text-center mt-4">No global variables</div>
         ) : (
           <div className="space-y-1.5">
             {Object.entries(variables).map(([key, value]) => {
@@ -39,9 +41,9 @@ export function VariableTracker() {
               }
 
               return (
-                <div key={key} className="flex justify-between items-center text-[11px] font-mono border border-border/30 rounded-md bg-background/50 py-1.5 px-2.5 group/var transition-all hover:border-border/60">
-                  <span className="text-[#89b4fa]/80 group-hover/var:text-[#89b4fa] transition-colors truncate mr-2" title={key}>{key}</span>
-                  <span className={`${valueClass} truncate font-bold max-w-[120px] transition-all`} title={displayValue}>
+                <div key={key} className="grid grid-cols-[minmax(0,1fr)_minmax(70px,auto)] gap-2 text-[11px] font-mono border border-border/40 rounded-md bg-background/70 py-1.5 px-2">
+                  <span className="text-primary/85 truncate" title={key}>{key}</span>
+                  <span className={`${valueClass} truncate font-semibold text-right`} title={displayValue}>
                     {displayValue}
                   </span>
                 </div>

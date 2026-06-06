@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Editor from 'react-simple-code-editor';
 import { useCodeStore } from '../store/useCodeStore';
 import { generateFlowGraph } from '../utils/astParser';
-import { Code2, AlertCircle, Loader2 } from 'lucide-react';
+import { Code2, AlertCircle, Loader2, Lock } from 'lucide-react';
 
 // Defer Prism as it can cause build-time SSR issues
 let Prism: any = null;
@@ -52,11 +52,11 @@ export function CodeEditor() {
 
   if (!mounted || !prismReady) {
     return (
-      <div className="flex flex-col h-full bg-card border-r border-border overflow-hidden">
-        <div className="px-3 py-2 bg-secondary/50 border-b border-border text-muted-foreground font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 shrink-0">
-          <Code2 size={14} className="text-primary" /> Source Editor
+      <div className="cn-panel flex h-full flex-col rounded-none border-0">
+        <div className="cn-panel-header">
+          <span className="cn-icon-label"><Code2 size={14} /> Source Editor</span>
         </div>
-        <div className="flex-1 flex flex-col items-center justify-center font-mono text-[11px] text-muted-foreground/30 gap-2">
+        <div className="flex-1 flex flex-col items-center justify-center font-mono text-[11px] text-muted-foreground gap-2">
           <Loader2 size={16} className="animate-spin text-primary/40" />
           <span>Initializing Syntax Engine...</span>
         </div>
@@ -65,20 +65,25 @@ export function CodeEditor() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-card border-r border-border overflow-hidden">
-      <div className="px-3 py-2 bg-secondary/50 border-b border-border text-muted-foreground font-bold text-[10px] uppercase tracking-widest flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <Code2 size={14} className="text-primary" /> 
-          Source Editor
+    <div className="cn-panel flex h-full flex-col rounded-none border-0">
+      <div className="cn-panel-header">
+        <div className="cn-icon-label">
+          <Code2 size={14} />
+          <span>Source Editor</span>
+          {isRunning && (
+            <span className="ml-2 inline-flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[9px] text-primary normal-case">
+              <Lock size={10} /> locked
+            </span>
+          )}
         </div>
         {highlightError && (
-          <div className="flex items-center gap-1 text-destructive text-[8px] font-black uppercase">
+          <div className="flex items-center gap-1 text-destructive text-[10px] font-semibold normal-case">
             <AlertCircle size={10} /> {highlightError}
           </div>
         )}
       </div>
       
-      <div className="flex-1 overflow-auto custom-scrollbar code-editor-container relative">
+      <div className="flex-1 min-h-0 overflow-auto custom-scrollbar code-editor-container relative bg-[#0b1017]">
         <Editor
           value={code}
           onValueChange={(code) => setCode(code)}
@@ -92,16 +97,17 @@ export function CodeEditor() {
               return code;
             }
           }}
-          padding={20}
+          padding={16}
           disabled={isRunning}
-          className="font-mono text-[13px] min-h-full transition-opacity duration-300"
+          className="font-mono text-[13px] min-h-full min-w-max transition-opacity duration-300"
           style={{
             fontFamily: 'var(--font-geist-mono), monospace',
             color: 'var(--foreground)',
             opacity: isRunning ? 0.6 : 1,
+            lineHeight: 1.65,
           }}
-          textareaClassName="outline-none focus:ring-0 min-h-full"
-          preClassName="min-h-full"
+          textareaClassName="outline-none focus:ring-0 min-h-full min-w-max resize-none"
+          preClassName="min-h-full min-w-max"
         />
       </div>
     </div>

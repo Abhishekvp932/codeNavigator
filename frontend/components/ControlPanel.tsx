@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Pause, StepForward, RotateCcw } from 'lucide-react';
+import { Play, Pause, StepForward, RotateCcw, Gauge } from 'lucide-react';
 import { useCodeStore } from '../store/useCodeStore';
 import { StepEvent } from '../utils/executor';
 
@@ -108,48 +108,49 @@ export function ControlPanel() {
   }
 
   return (
-    <div className="flex items-center gap-4 bg-card/80 backdrop-blur-md px-4 py-2 border border-border shadow-2xl rounded-full transition-all duration-300 hover:shadow-primary/10">
-      <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-3 rounded-lg border border-border bg-card/95 px-2.5 py-2 shadow-xl backdrop-blur">
+      <div className="flex items-center gap-1.5">
         {!isRunning || isPaused ? (
           <button 
             onClick={isRunning ? handleResume : handleStart} 
-            className="group flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20"
+            className="group flex h-8 items-center gap-2 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:brightness-110 active:translate-y-px"
           >
-            <Play size={12} fill="currentColor" className="group-hover:scale-110 transition-transform" /> 
+            <Play size={13} fill="currentColor" />
             {isRunning ? "Resume" : "Run Code"}
           </button>
         ) : (
           <button 
             onClick={handlePause} 
-            className="group flex items-center gap-2 bg-muted text-foreground px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-secondary active:scale-95 transition-all shadow-md"
+            className="group flex h-8 items-center gap-2 rounded-md bg-secondary px-3 text-xs font-semibold text-foreground transition-colors hover:bg-muted active:translate-y-px"
           >
-            <Pause size={12} fill="currentColor" className="group-hover:scale-110 transition-transform" /> 
+            <Pause size={13} fill="currentColor" />
             Pause
           </button>
         )}
         
         <button 
           onClick={handleStep} 
-          className="group flex items-center gap-2 bg-accent text-accent-foreground px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-accent/20"
+          className="group flex h-8 items-center gap-2 rounded-md border border-border bg-background px-3 text-xs font-semibold text-foreground transition-colors hover:bg-secondary active:translate-y-px"
         >
-          <StepForward size={12} className="group-hover:translate-x-0.5 transition-transform" /> 
+          <StepForward size={13} />
           Step
         </button>
 
         <button 
           onClick={handleStop} 
           disabled={!isRunning} 
-          className="group flex items-center gap-2 bg-destructive/10 text-destructive border border-destructive/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-destructive hover:text-destructive-foreground active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none"
+          className="group flex h-8 items-center gap-2 rounded-md border border-destructive/25 bg-destructive/10 px-3 text-xs font-semibold text-destructive transition-colors hover:bg-destructive hover:text-primary-foreground active:translate-y-px disabled:pointer-events-none disabled:opacity-35"
         >
-          <RotateCcw size={12} className="group-rotate-180 transition-transform duration-500" /> 
+          <RotateCcw size={13} />
           Reset
         </button>
       </div>
 
-      <div className="h-6 w-px bg-border mx-1" />
+      <div className="h-6 w-px bg-border" />
 
-      <div className="flex items-center gap-3 text-muted-foreground text-[10px] font-bold uppercase tracking-widest pl-1">
-        <label className="opacity-70 whitespace-nowrap">Speed</label>
+      <div className="flex items-center gap-2 text-muted-foreground text-[10px] font-semibold">
+        <Gauge size={13} />
+        <label className="whitespace-nowrap">Speed</label>
         <div className="relative flex items-center group/slider">
           <input 
             type="range" 
@@ -158,7 +159,7 @@ export function ControlPanel() {
             step="100" 
             value={speed} 
             onChange={(e) => setSpeed(Number(e.target.value))}
-            className="w-24 accent-primary h-1 bg-secondary rounded-full appearance-none cursor-pointer transition-all group-hover/slider:h-1.5"
+            className="h-1 w-24 cursor-pointer appearance-none rounded-full bg-secondary accent-primary"
           />
         </div>
         <span className="w-12 text-right font-mono text-primary">{speed}ms</span>

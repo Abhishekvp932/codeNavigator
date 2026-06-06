@@ -29,10 +29,10 @@ export function generateFlowGraph(code: string): FlowGraph {
         data: { label },
         type,
         style: {
-          background: '#1e1e2e',
-          color: '#cdd6f4',
-          border: '1px solid #cba6f7',
-          borderRadius: '8px',
+          background: 'var(--card)',
+          color: 'var(--foreground)',
+          border: '1px solid var(--border)',
+          borderRadius: '6px',
           padding: '10px',
           width: 250,
         },
@@ -47,7 +47,7 @@ export function generateFlowGraph(code: string): FlowGraph {
         label,
         type: 'smoothstep',
         animated: true,
-        style: { stroke: '#cba6f7' },
+        style: { stroke: 'var(--border)' },
       });
     };
 
